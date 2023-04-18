@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:accelerator-banking="http://www.mulesoft.org/schema/mule/accelerator-banking" xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd  http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd  http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/accelerator-banking http://www.mulesoft.org/schema/mule/accelerator-banking/current/mule-accelerator-banking.xsd">
+    <global-property doc:name="global-property-mule.env" doc:id="5c2b8274-6ce1-448e-911c-c1cb9380cc74" name="mule.env" value="local" />
+    <global-property doc:name="global-property-mule.key" doc:id="632b3e28-0a3e-41b6-880e-c39997aafdde" name="mule.key" value="Salesforce123456" />
+    <configuration-properties doc:name="configuration-properties" doc:id="f73ca0e3-eec6-46f2-9f5c-78a963e29050" file="config/config.yaml" />
+    <configuration-properties doc:name="configuration-properties-env" doc:id="4c53451b-2aa3-4b30-8419-213d042cec64" file="config/config-${mule.env}.yaml" />
+    <secure-properties:config name="configuration-properties-secured-env" doc:name="configuration-properties-secured-env" doc:id="d76480d5-e974-413d-be42-3a2871214a49" file="config/config-secured-${mule.env}.yaml" key="${mule.key}" />
+    <import doc:name="import-global-common.xml" doc:id="834c1759-365c-4bd0-80ac-49d2e4d99741" file="global-common.xml" />
+    <import doc:name="import-common-error-handler.xml" doc:id="26c5e93d-5bf0-4f6d-b39f-79c4b04b3792" file="common-error-handler.xml" />
+    <http:listener-config name="openbanking-pisp-dom-exp-api-httpListenerConfig">
+        <http:listener-connection host="${https.host}" port="${https.port}" protocol="HTTPS" tlsContext="common-selfsigned_tlsContext" />
+    </http:listener-config>
+    <apikit:config name="openbanking-pisp-dom-exp-api-config" api="resource::org.mule.examples:fins-openbanking-pisp-dom-exp-api-spec:1.3.3:raml:zip:fins-openbanking-pisp-dom-exp-api-spec.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <!-- <api-gateway:autodiscovery apiId="${api.autodiscoveryID}" ignoreBasePath="true" 
+		doc:name="API Autodiscovery" doc:id="99974e38-99ca-4e39-8a14-f8451597b96d" 
+		flowRef="mainflow" /> -->
+    <http:request-config name="openbanking-aspsp-exp-httpRequestConfig" doc:name="HTTP Request configuration" doc:id="0870f775-caa9-4eb4-82d1-c5af1596a4bd" basePath="${openbanking-aspsp-exp-api.base-path}">
+        <http:request-connection protocol="HTTPS" host="${openbanking-aspsp-exp-api.host}" port="${openbanking-aspsp-exp-api.port}" connectionIdleTimeout="${openbanking-aspsp-exp-api.connection-idle-timeout}">
+            <reconnection>
+                <reconnect frequency="${openbanking-aspsp-exp-api.http-frequency}" count="${openbanking-aspsp-exp-api.http-reconnection-attempts}" />
+            </reconnection>
+            <http:authentication>
+                <http:basic-authentication username="${fins-openbanking-pisp-dom-exp-api.http-client.client-id}" password="${fins-openbanking-pisp-dom-exp-api.http-client.client-secret}" />
+            </http:authentication>
+        </http:request-connection>
+    </http:request-config>
+    <validation:config name="Validation_Config" doc:name="Validation Config" doc:id="bcde0d2d-21cc-4ef1-8ef0-7b055f57b5a6" />
+    <accelerator-banking:config name="accelerator-banking-config" doc:name="Accelerator Banking Config" doc:id="0e6a2bd0-7837-43f4-842e-226e7ad24a15" apiName="${api.name}" apiVersion="${api.version}" />
+</mule>

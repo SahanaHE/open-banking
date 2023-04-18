@@ -1,0 +1,144 @@
+%dw 2.0
+
+type auto_d8497c04_b92d_4f2b_9133_f5326aac6743_Input_Payload = {
+  Risk: {
+    PaymentContextCode: "PersonToPerson" | "EcommerceGoods", 
+    DeliveryAddress?: {
+      StreetName: String, 
+      AddressLine: String, 
+      BuildingNumber: String, 
+      TownName: String, 
+      Country: String, 
+      CountrySubdivision: String, 
+      PostCode: String, 
+      _?: Any
+    }, 
+    MerchantCategoryCode?: String, 
+    MerchantCustomerIdentification?: String, 
+    _?: Any
+  }, 
+  Data: {
+    ConsentId: String, 
+    Initiation: {
+      SupplementaryData?: String, 
+      DebtorAccount?: {
+        SecondaryIdentification?: String, 
+        SchemeName?: "RetailBank" | "FinTechPayment" | "SortCodeAccountNumber" | "InvestmentBank" | "CryptoPayment", 
+        Identification: String, 
+        AccountType?: String, 
+        Name: String, 
+        _?: Any
+      }, 
+      CreditorAgent?: {
+        PostalAddress?: {
+          StreetName: String, 
+          Department?: String, 
+          AddressLine: String, 
+          TownName: String, 
+          StreetNumber: String, 
+          Country: String, 
+          SubDepartment?: String, 
+          CountrySubdivision: String, 
+          AddressType: "DeliveryTo" | "POBox" | "Residential" | "Statement" | "Correspondence" | "Postal" | "Business" | "MailTo", 
+          PostCode: String, 
+          _?: Any
+        }, 
+        SchemeName?: "RetailBank" | "FinTechPayment" | "SortCodeAccountNumber" | "InvestmentBank" | "CryptoPayment", 
+        Identification: String, 
+        Name: String, 
+        _?: Any
+      }, 
+      EndToEndIdentification: String, 
+      InstructionIdentification: "PAYMENT" | "NATIONAL_TRANSFER" | "ALTERNATIVE_PAYMENT" | "DEBIT_TRANSFER" | "INTERNATIONAL_TRANSFER" | "CRYPTO_PAYMENT" | "CASH_OUT" | "REMITTANCE" | "CASH_IN" | "TRANSFER" | "CREDIT_CARD_PAYMENT" | "CREDIT_TRANSFER", 
+      CurrencyOfTransfer: "AED" | "MXN" | "EUR" | "DKK" | "USD" | "CAD" | "XDR" | "INR" | "CNY" | "AUD" | "KRW" | "JPY" | "GBP" | "BRL", 
+      CreditorAccount: {
+        SecondaryIdentification?: String, 
+        SchemeName?: "RetailBank" | "FinTechPayment" | "SortCodeAccountNumber" | "InvestmentBank" | "CryptoPayment", 
+        Identification: String, 
+        AccountType?: String, 
+        Name: String, 
+        _?: Any
+      }, 
+      Purpose?: String, 
+      ChargeBearer?: "BorneByCreditor" | "BorneByDebtor" | "FollowingServiceLevel" | "Shared", 
+      InstructionPriority: "Urgent" | "Normal", 
+      LocalInstrument?: String, 
+      Debtor?: {
+        PostalAddress?: {
+          StreetName: String, 
+          Department?: String, 
+          AddressLine: String, 
+          TownName: String, 
+          StreetNumber: String, 
+          Country: String, 
+          SubDepartment?: String, 
+          CountrySubdivision: String, 
+          AddressType: "DeliveryTo" | "POBox" | "Residential" | "Statement" | "Correspondence" | "Postal" | "Business" | "MailTo", 
+          PostCode: String, 
+          _?: Any
+        }, 
+        Name: String, 
+        _?: Any
+      }, 
+      RemittanceInformation?: {
+        Unstructured: String, 
+        Reference: String, 
+        _?: Any
+      }, 
+      ExchangeRateInformation?: {
+        ExchangeRate: Number, 
+        RateType: "Agreed" | "Indicative" | "Actual", 
+        UnitCurrency: "AED" | "MXN" | "EUR" | "DKK" | "USD" | "CAD" | "XDR" | "INR" | "CNY" | "AUD" | "KRW" | "JPY" | "GBP" | "BRL", 
+        ContractIdentification: String, 
+        _?: Any
+      }, 
+      UserID?: String, 
+      DebtorAgent?: {
+        PostalAddress?: {
+          StreetName: String, 
+          Department?: String, 
+          AddressLine: String, 
+          TownName: String, 
+          StreetNumber: String, 
+          Country: String, 
+          SubDepartment?: String, 
+          CountrySubdivision: String, 
+          AddressType: "DeliveryTo" | "POBox" | "Residential" | "Statement" | "Correspondence" | "Postal" | "Business" | "MailTo", 
+          PostCode: String, 
+          _?: Any
+        }, 
+        SchemeName?: "RetailBank" | "FinTechPayment" | "SortCodeAccountNumber" | "InvestmentBank" | "CryptoPayment", 
+        Identification: String, 
+        Name: String, 
+        _?: Any
+      }, 
+      ChannelType: "Bank_Fedwire" | "Blockchain" | "LOCAL" | "Bank_SEPA" | "Bank_ACH" | "Bank_SWIFT", 
+      Creditor?: {
+        PostalAddress?: {
+          StreetName: String, 
+          Department?: String, 
+          AddressLine: String, 
+          TownName: String, 
+          StreetNumber: String, 
+          Country: String, 
+          SubDepartment?: String, 
+          CountrySubdivision: String, 
+          AddressType: "DeliveryTo" | "POBox" | "Residential" | "Statement" | "Correspondence" | "Postal" | "Business" | "MailTo", 
+          PostCode: String, 
+          _?: Any
+        }, 
+        Name: String, 
+        _?: Any
+      }, 
+      InstructedAmount: {
+        Amount: Number, 
+        Currency: String, 
+        _?: Any
+      }, 
+      _?: Any
+    }, 
+    _?: Any
+  }, 
+  _?: Any
+}
+

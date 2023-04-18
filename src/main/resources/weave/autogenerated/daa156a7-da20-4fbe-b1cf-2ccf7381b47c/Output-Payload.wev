@@ -1,0 +1,11 @@
+%dw 2.0
+
+type auto_daa156a7_da20_4fbe_b1cf_2ccf7381b47c_Output_Payload = {
+  apiName: String, 
+  apiVersion: String, 
+  status: "DEGRADED" | "OK" | "OFFLINE", 
+  timestamp: String, 
+  dependencies?: Array<{    name: String,     status: "DOWN" | "ERROR" | "UP",     _?: Any  } {"description": "Represents a dependency status result for ping responses"}> {"description": "Optional list of connections this API is dependent upon"}, 
+  _?: Any
+} {"description": "Represents a standard response structure for API health checks"}
+

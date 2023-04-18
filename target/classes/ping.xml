@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="ping_get-health" doc:id="7c8ce4ef-31e6-4714-b002-1dbd2f89c02e" >
+		<set-variable value='#[attributes.queryParams.checkDependencies == "true" default false]' doc:name="checkDependencies" doc:id="2036a0fb-689d-4fe6-bfbb-e3bdf61d84e4" variableName="checkDependencies"/>
+		<choice doc:name="Choice" doc:id="c7f38934-3f44-40de-b65f-e0ad399e5b7f" >
+			<when expression="#[vars.checkDependencies]">
+				<flow-ref doc:name="Check Dependencies" doc:id="067068fd-24f5-4416-a79a-94e7ad5def3b" name="ping_check-dependencies" target="dependencyList"/>
+			</when>
+			<otherwise>
+				<set-variable doc:name="dependencyList" doc:id="a7d513c3-49f2-4b6a-b1b8-4deb0eb82611" variableName="dependencyList" value="#[null]"/>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Map Response" doc:id="e7fb9656-5d9b-4a2e-8804-ad88036dc1b8">
+			<ee:message>
+				<ee:set-payload resource="dwl/ping-check-dependency-response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<set-variable value="200" doc:name="httpStatus" doc:id="7361d227-08b5-4c9a-8746-907c54bcd5d4" variableName="httpStatus"/>
+	</sub-flow>
+	<sub-flow name="ping_check-dependencies" doc:id="bfab46ac-1d9c-4308-b96d-c45a5deb5df2" >
+		<flow-ref doc:name="ping_check-dependency-openbanking-aspsp-exp-api" doc:id="fad5ec2e-f141-48ae-bf29-04fe68840f01" name="ping_check-dependency-openbanking-aspsp-exp-api" />
+	</sub-flow>
+	<sub-flow name="ping_check-dependency-openbanking-aspsp-exp-api" doc:id="8cd4d820-2b38-41c9-83f5-002ec2258722" >
+		<set-variable value="#[p('openbanking-aspsp-exp-api.host')]" doc:name="sysCheckHost" doc:id="725ea36c-f15e-4391-ac7a-ac5e94beaebb" variableName="sysCheckHost" />
+		<try doc:name="Try" doc:id="c7bceeb0-528a-4238-a767-d0518ac18c48" >
+			<http:request method="GET" doc:name="Ping OpenBanking ASPSP EXP API" doc:id="3cd473b7-1c4c-4379-8ad8-018137e8b17b" config-ref="openbanking-aspsp-exp-httpRequestConfig" path="/ping" sendCorrelationId="ALWAYS" correlationId="#[correlationId]" />
+			<set-variable value="#['UP']" doc:name="backendSystemStatus" doc:id="bd3eb02d-0e1e-4aad-a617-7ba8ca05f597" variableName="backendSystemStatus" />
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="16bc6e67-058d-4d1a-85c9-b6831f8c5fcb" type="HTTP:GATEWAY_TIMEOUT, HTTP:TIMEOUT" >
+					<set-variable value="#['DOWN']" doc:name="backendSystemStatus" doc:id="df7b14d5-abee-44ba-b93a-c14d794dd129" variableName="backendSystemStatus" />
+				</on-error-continue>
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e9c7ae13-0321-4999-8cc5-00e10f902810" >
+					<set-variable value="#['ERROR']" doc:name="backendSystemStatus" doc:id="485bc472-7936-44e3-8e4d-bba746bd62e5" variableName="backendSystemStatus" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<ee:transform doc:name="Dependency Status Response" doc:id="6192de10-e506-4fc2-bdb5-3dac8725ea96" >
+			<ee:message >
+				<ee:set-payload resource="dwl/ping-check-dependency-sys-api-response.dwl" />
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+
+</mule>

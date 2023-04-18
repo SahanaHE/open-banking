@@ -1,0 +1,803 @@
+{
+	"info": {
+		"_postman_id": "b6d68b65-807f-4673-872d-aafadf1331e6",
+		"name": "fins-openbanking-pisp-dom-exp-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12367964"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Query Health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host-fins-openbanking-pisp-dom-exp-api}}/api/ping",
+							"protocol": "https",
+							"host": [
+								"{{host-fins-openbanking-pisp-dom-exp-api}}"
+							],
+							"path": [
+								"api",
+								"ping"
+							]
+						},
+						"description": "Call ping operation with no parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Query Health with Dependencies",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host-fins-openbanking-pisp-dom-exp-api}}/api/ping?checkDependencies=true",
+							"protocol": "https",
+							"host": [
+								"{{host-fins-openbanking-pisp-dom-exp-api}}"
+							],
+							"path": [
+								"api",
+								"ping"
+							],
+							"query": [
+								{
+									"key": "checkDependencies",
+									"value": "true",
+									"description": "Include health of dependencies"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Query Health with Invalid Parameter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host-fins-openbanking-pisp-dom-exp-api}}/api/ping?checkDependencies=true-ish",
+							"protocol": "https",
+							"host": [
+								"{{host-fins-openbanking-pisp-dom-exp-api}}"
+							],
+							"path": [
+								"api",
+								"ping"
+							],
+							"query": [
+								{
+									"key": "checkDependencies",
+									"value": "true-ish",
+									"description": "Should not return dependencies"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "CoreBanking Test Data",
+					"item": [
+						{
+							"name": "Post Customers with Individual",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    let internalHeaderValue = pm.response.headers.get('Location').split('/customers/')[1];\r",
+											"    console.log(\"customer1Id \" + internalHeaderValue);\r",
+											"    pm.collectionVariables.set(\"customer1Id\",internalHeaderValue);\r",
+											"    pm.response.to.have.status(201);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": null,\n\t\"partyRoleType\": \"Customer\",\n\t\"party\": [{\n\t\t\"id\": null,\n\t\t\"partyType\": \"Individual\",\n        \"salutation\": \"{{$randomNamePrefix}}\",\n\t\t\"firstName\": \"{{$randomFirstName}}\",\n        \"personName\": \"{{$randomFullName}}\",\n        \"birthDate\":\"1984-03-17\",\n\t\t\"lastName\": \"{{$randomLastName}}\",\n        \"contactPoints\":[\n    {\n        \"contactPointType\": [\n            \"ContactPointPhone\"\n        ],\n        \"id\": null,\n        \"activeFromDate\": \"2015-03-15\",\n        \"telephoneNumber\": \"{{$randomPhoneNumber}}\",\n        \"extensionNumber\": \"22444\",\n        \"formattedE164PhoneNumber\": \"+1 {{$randomPhoneNumber}}\",\n        \"formattedInternationalPhoneNumber\": \"001 {{$randomPhoneNumber}}\"\n    },\n    {\n        \"contactPointType\": [\n            \"ContactPointEmail\"\n        ],\n        \"id\": null,\n        \"activeFromDate\": \"2015-03-15\",\n        \"emailAddress\": \"{{$randomExampleEmail}}\",\n        \"emailBouncedReason\": \"test bounce\",\n        \"emailDomain\": \"{{$randomDomainName}}\",\n        \"emailMailBox\": \"spam\"\n    },\n    {\n        \"contactPointType\": [\n            \"ContactPointAddress\"\n        ],\n        \"id\": null,\n        \"activeFromDate\": \"2020-03-05\",\n        \"geoLongitude\": {{$randomLongitude}},\n        \"geoLatitude\": {{$randomLatitude}},\n        \"cityName\": \"{{$randomCity}}\",\n        \"addressLine1\": \"{{$randomStreetName}}\",\n        \"stateProvinceName\": \"TX\",\n        \"addressLine4\": \"{{$randomCity}}\",\n        \"countryName\": \"USA\"\n    }\n]\n\t}],\n\t\"externalIds\": [{\n\t\t\"id\": null,\n\t\t\"externalId\": \"{{$randomUUID}}\",\n\t\t\"externalIdType\": [\"MDM\"]\n\t}],\n\t\"customerStatus\": \"ACTIVE\",\n    \"customerNumber\":\"{{$randomBankAccountBic}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{host_core_banking_customers_sys_api}}/api/customers",
+									"protocol": "https",
+									"host": [
+										"{{host_core_banking_customers_sys_api}}"
+									],
+									"path": [
+										"api",
+										"customers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post Customers with Individual",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    let internalHeaderValue = pm.response.headers.get('Location').split('/customers/')[1];\r",
+											"    console.log(\"customer2Id \" + internalHeaderValue);\r",
+											"    pm.collectionVariables.set(\"customer2Id\",internalHeaderValue);\r",
+											"    pm.response.to.have.status(201);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": null,\n\t\"partyRoleType\": \"Customer\",\n\t\"party\": [{\n\t\t\"id\": null,\n\t\t\"partyType\": \"Individual\",\n        \"salutation\": \"{{$randomNamePrefix}}\",\n\t\t\"firstName\": \"{{$randomFirstName}}\",\n        \"personName\": \"{{$randomFullName}}\",\n        \"birthDate\":\"1984-03-17\",\n\t\t\"lastName\": \"{{$randomLastName}}\",\n        \"contactPoints\":[\n    {\n        \"contactPointType\": [\n            \"ContactPointPhone\"\n        ],\n        \"id\": null,\n        \"activeFromDate\": \"2015-03-15\",\n        \"telephoneNumber\": \"{{$randomPhoneNumber}}\",\n        \"extensionNumber\": \"22444\",\n        \"formattedE164PhoneNumber\": \"+1 {{$randomPhoneNumber}}\",\n        \"formattedInternationalPhoneNumber\": \"001 {{$randomPhoneNumber}}\"\n    },\n    {\n        \"contactPointType\": [\n            \"ContactPointEmail\"\n        ],\n        \"id\": null,\n        \"activeFromDate\": \"2015-03-15\",\n        \"emailAddress\": \"{{$randomExampleEmail}}\",\n        \"emailBouncedReason\": \"test bounce\",\n        \"emailDomain\": \"{{$randomDomainName}}\",\n        \"emailMailBox\": \"spam\"\n    },\n    {\n        \"contactPointType\": [\n            \"ContactPointAddress\"\n        ],\n        \"id\": null,\n        \"activeFromDate\": \"2020-03-05\",\n        \"geoLongitude\": {{$randomLongitude}},\n        \"geoLatitude\": {{$randomLatitude}},\n        \"cityName\": \"{{$randomCity}}\",\n        \"addressLine1\": \"{{$randomStreetName}}\",\n        \"stateProvinceName\": \"TX\",\n        \"addressLine4\": \"{{$randomCity}}\",\n        \"countryName\": \"USA\"\n    }\n]\n\t}],\n\t\"externalIds\": [{\n\t\t\"id\": null,\n\t\t\"externalId\": \"{{$randomUUID}}\",\n\t\t\"externalIdType\": [\"MDM\"]\n\t}],\n\t\"customerStatus\": \"ACTIVE\",\n    \"customerNumber\":\"{{$randomBankAccountBic}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{host_core_banking_customers_sys_api}}/api/customers",
+									"protocol": "https",
+									"host": [
+										"{{host_core_banking_customers_sys_api}}"
+									],
+									"path": [
+										"api",
+										"customers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post Accounts",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"let internalHeaderValue = pm.response.headers.get('Location').split('/accounts/')[1];\r",
+											"console.log(\"debitAccountId \" + internalHeaderValue);\r",
+											"    pm.collectionVariables.set(\"debitAccountId\",internalHeaderValue);\r",
+											"    pm.variables.set(\"debitAccountId\",internalHeaderValue);\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": null,\n    \"name\": \"{{$randomFullName}}\",\n    \"accountNumber\": \"{{$randomUUID}}\",\n    \"accountType\": \"DepositAccount\",\n    \"depositAccountType\": \"SAVINGS\",\n    \"primaryAccountOwner\": \"{{customer1Id}}\",\n    \"accountStatus\": \"OPEN\",\n    \"accountBalance\": 15000,\n    \"availableBalance\": 15000,\n    \"accountCurrency\": \"USD\",\n    \"accountLabel\": \"Rainy Day\",\n    \"interestRate\": 0.25,\n    \"taxIdentificationNumber\": \"012345678\",\n    \"lastTransactionDate\": \"2021-06-15\",\n    \"lastTransactionType\": \"CreditTransaction\",\n    \"lastTransactionAmount\": 50.60,\n    \"lastPaymentDate\": \"2021-09-08\",\n    \"lastPaymentAmount\": 123.40,\n    \"openedDate\": \"2020-03-15\",\n    \"externalIds\": [\n        {\n            \"id\": null,\n            \"externalId\": \"{{$randomUUID}}\",\n            \"externalIdType\": [\n                \"MDM\"\n            ],\n            \"status\": \"VALID\",\n            \"statusLastChangedDate\": \"2021-11-05T18:30:35.000Z\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{host_core_banking_accounts_sys_api}}/api/accounts",
+									"protocol": "https",
+									"host": [
+										"{{host_core_banking_accounts_sys_api}}"
+									],
+									"path": [
+										"api",
+										"accounts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Post Accounts  - CreditAccountId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"let internalHeaderValue = pm.response.headers.get('Location').split('/accounts/')[1];\r",
+											"console.log(\"creditAccountId \" + internalHeaderValue);\r",
+											"    pm.collectionVariables.set(\"creditAccountId\",internalHeaderValue);\r",
+											"    pm.variables.set(\"creditAccountId\",internalHeaderValue);\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": null,\n  \"name\": \"{{$randomFullName}}\",\n  \"accountNumber\": \"{{$randomUUID}}\",\n  \"accountType\": \"DepositAccount\",\n  \"depositAccountType\" : \"CHECKING\",\n  \"primaryAccountOwner\": \"{{customer2Id}}\",\n  \"accountStatus\": \"OPEN\",\n  \"accountBalance\": 20000,\n  \"availableBalance\": 20000,\n  \"accountCurrency\": \"USD\",\n  \"taxIdentificationNumber\": \"012345678\",\n  \"openedDate\": \"2020-03-15\",\n  \"lastTransactionDate\": \"2021-06-15\",\n  \"lastTransactionType\": \"CreditTransaction\",\n  \"lastTransactionAmount\": 50.60,\n  \"lastPaymentDate\": \"2021-09-08\",\n  \"lastPaymentAmount\": 123.40,\n  \"externalIds\": [ {\n    \"id\": null,\n    \"externalId\": \"{{$randomUUID}}\",\n    \"externalIdType\": [ \"MDM\" ],\n    \"status\": \"VALID\",\n    \"statusLastChangedDate\": \"2020-03-15T15:03:01Z\"\n  }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{host_core_banking_accounts_sys_api}}/api/accounts",
+									"protocol": "https",
+									"host": [
+										"{{host_core_banking_accounts_sys_api}}"
+									],
+									"path": [
+										"api",
+										"accounts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Credit Account Number",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    var jsonData = JSON.parse(responseBody);\r",
+											"    let creditAccountNumber = jsonData.accountNumber;\r",
+											"    console.log(\"credit Account Number \" + creditAccountNumber);\r",
+											"    pm.collectionVariables.set(\"creditAccountNumber\", creditAccountNumber);\r",
+											"    pm.variables.set(\"creditAccountNumber\", creditAccountNumber);\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{host_core_banking_accounts_sys_api}}/api/accounts/:accountId",
+									"protocol": "https",
+									"host": [
+										"{{host_core_banking_accounts_sys_api}}"
+									],
+									"path": [
+										"api",
+										"accounts",
+										":accountId"
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{creditAccountId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Debit Account Number",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    var jsonData = JSON.parse(responseBody);\r",
+											"    let debitAccountNumber = jsonData.accountNumber;\r",
+											"    console.log(\"debitAccountNumber \" + debitAccountNumber);\r",
+											"    pm.collectionVariables.set(\"debitAccountNumber\", debitAccountNumber);\r",
+											"    pm.variables.set(\"debitAccountNumber\", debitAccountNumber);\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{host_core_banking_accounts_sys_api}}/api/accounts/:accountId",
+									"protocol": "https",
+									"host": [
+										"{{host_core_banking_accounts_sys_api}}"
+									],
+									"path": [
+										"api",
+										"accounts",
+										":accountId"
+									],
+									"variable": [
+										{
+											"key": "accountId",
+											"value": "{{debitAccountId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Post Domestic Payment Consents",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"Data\": {\n    \"Initiation\": {\n      \"InstructionIdentification\": \"NATIONAL_TRANSFER\",\n      \"EndToEndIdentification\": \"FRESCO.21302.GFX.37\",\n      \"ChannelType\":  \"Bank_ACH\",\n       \"UserID\":\"123\",\n       \"LocalInstrument\": \"\",\n       \"InstructionPriority\":  \"Normal\",\n       \"Purpose\":  \"CREDIT_TRANSFER\",\n       \"ChargeBearer\": \"BorneByDebtor\",\n       \"CurrencyOfTransfer\": \"USD\",\n       \"InstructedAmount\": {\n        \"Amount\": 200.00,\n        \"Currency\": \"USD\"\n      },\n      \"ExchangeRateInformation\": {\n               \"UnitCurrency\": \"USD\", \n              \"ExchangeRate\": 1.0,\n              \"RateType\": \"Actual\",\n              \"ContractIdentification\": \"\"\n        },\n        \"Debtor\":{\n          \"Name\": \"SavingsAccount\" \n        },\n      \"DebtorAccount\": {\n            \"SchemeName\":\"RetailBank\",\n            \"Identification\": \"33378923-CHQK\",\n            \"Name\": \"Ariana Grande\",\n            \"AccountType\":\"Savings\",\n            \"SecondaryIdentification\":\"\"  \n        },\n        \"DebtorAgent\": {\n              \"Name\":\"BOA\",\n              \"Identification\":\"BOFAUS3N\",\n              \"SchemeName\": \"RetailBank\"\n        },\n          \"Creditor\":{\n          \"Name\": \"ChecquingAccount\" \n        },\n        \"CreditorAgent\": {\n              \"Name\":\"CITI\",\n              \"Identification\":\"CITICATTBCH\",\n               \"SchemeName\": \"RetailBank\"\n        },\n       \"CreditorAccount\":  {\n           \"SchemeName\": \"RetailBank\",\n           \"Identification\": \"7678334-SVG\",\n           \"Name\": \"Jonathan Swift\",\n           \"AccountType\":\"Checking\",\n          \"SecondaryIdentification\": \"0002\"\n        },\n      \"RemittanceInformation\": {\n        \"Reference\": \"FRESCO-037\",\n        \"Unstructured\": \"Internal ops code 5120103\"\n      }\n    }\n  },\n  \"Risk\": {\n    \"PaymentContextCode\": \"PersonToPerson\",\n     \"MerchantCategoryCode\": \"5967\",\n    \"MerchantCustomerIdentification\": \"053598653254\",\n     \"DeliveryAddress\": {\n        \"AddressLine\":  \"\",\n        \"StreetName\": \"Main St.\",\n        \"BuildingNumber\": \"123\",\n        \"PostCode\": \"17699\",\n        \"TownName\": \"Chicago\",\n        \"CountrySubdivision\": \"Illinois\",\n        \"Country\":  \"US\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host-fins-openbanking-pisp-dom-exp-api}}/api/domestic-payment-consents",
+							"protocol": "https",
+							"host": [
+								"{{host-fins-openbanking-pisp-dom-exp-api}}"
+							],
+							"path": [
+								"api",
+								"domestic-payment-consents"
+							]
+						},
+						"description": "Call ping operation with no parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get  Domestic Payment Consents",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"Data\": {\n     \"ConsentId\": \"1234\",\n    \"Initiation\": {\n      \"InstructionIdentification\": \"NATIONAL_TRANSFER\",\n      \"EndToEndIdentification\": \"FRESCO.21302.GFX.37\",\n      \"ChannelType\":  \"Bank_ACH\",\n       \"UserID\":\"123\",\n       \"LocalInstrument\": \"\",\n       \"InstructionPriority\":  \"Normal\",\n       \"Purpose\":  \"CREDIT_TRANSFER\",\n       \"ChargeBearer\": \"BorneByDebtor\",\n       \"CurrencyOfTransfer\": \"USD\",\n       \"InstructedAmount\": {\n        \"Amount\": 200.00,\n        \"Currency\": \"USD\"\n      },\n      \"ExchangeRateInformation\": {\n               \"UnitCurrency\": \"USD\", \n              \"ExchangeRate\": 1.0,\n              \"RateType\": \"Actual\",\n              \"ContractIdentification\": \"\"\n        },\n        \"Debtor\":{\n          \"Name\": \"SavingsAccount\" \n        },\n      \"DebtorAccount\": {\n            \"SchemeName\":\"RetailBank\",\n            \"Identification\": \"33378923-CHQK\",\n            \"Name\": \"Ariana Grande\",\n            \"AccountType\":\"Savings\",\n            \"SecondaryIdentification\":\"\"  \n        },\n        \"DebtorAgent\": {\n              \"Name\":\"BOA\",\n              \"Identification\":\"BOFAUS3N\",\n              \"SchemeName\": \"RetailBank\"\n        },\n          \"Creditor\":{\n          \"Name\": \"ChecquingAccount\" \n        },\n        \"CreditorAgent\": {\n              \"Name\":\"CITI\",\n              \"Identification\":\"CITICATTBCH\",\n               \"SchemeName\": \"RetailBank\"\n        },\n       \"CreditorAccount\":  {\n           \"SchemeName\": \"RetailBank\",\n           \"Identification\": \"7678334-SVG\",\n           \"Name\": \"Jonathan Swift\",\n           \"AccountType\":\"Checking\",\n          \"SecondaryIdentification\": \"0002\"\n        },\n      \"RemittanceInformation\": {\n        \"Reference\": \"FRESCO-037\",\n        \"Unstructured\": \"Internal ops code 5120103\"\n      }\n    }\n  },\n  \"Risk\": {\n    \"PaymentContextCode\": \"PersonToPerson\",\n     \"MerchantCategoryCode\": \"5967\",\n    \"MerchantCustomerIdentification\": \"053598653254\",\n     \"DeliveryAddress\": {\n        \"AddressLine\":  \"\",\n        \"StreetName\": \"Main St.\",\n        \"BuildingNumber\": \"123\",\n        \"PostCode\": \"17699\",\n        \"TownName\": \"Chicago\",\n        \"CountrySubdivision\": \"Illinois\",\n        \"Country\":  \"US\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host-fins-openbanking-pisp-dom-exp-api}}/api/domestic-payment-consents/:ConsentId",
+							"protocol": "https",
+							"host": [
+								"{{host-fins-openbanking-pisp-dom-exp-api}}"
+							],
+							"path": [
+								"api",
+								"domestic-payment-consents",
+								":ConsentId"
+							],
+							"variable": [
+								{
+									"key": "ConsentId",
+									"value": "12344"
+								}
+							]
+						},
+						"description": "Call ping operation with no parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Post Domestic Payments - National - ACH",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"Data\": {\n     \"ConsentId\": \"1234\",\n    \"Initiation\": {\n      \"InstructionIdentification\": \"NATIONAL_TRANSFER\",\n      \"EndToEndIdentification\": \"FRESCO.21302.GFX.37\",\n      \"ChannelType\":  \"Bank_ACH\",\n       \"UserID\":\"123\",\n       \"LocalInstrument\": \"\",\n       \"InstructionPriority\":  \"Normal\",\n       \"Purpose\":  \"CREDIT_TRANSFER\",\n       \"ChargeBearer\": \"BorneByDebtor\",\n       \"CurrencyOfTransfer\": \"USD\",\n       \"InstructedAmount\": {\n        \"Amount\": 200.00,\n        \"Currency\": \"USD\"\n      },\n      \"ExchangeRateInformation\": {\n               \"UnitCurrency\": \"USD\", \n              \"ExchangeRate\": 1.0,\n              \"RateType\": \"Actual\",\n              \"ContractIdentification\": \"\"\n        },\n        \"Debtor\":{\n          \"Name\": \"SavingsAccount\" \n        },\n      \"DebtorAccount\": {\n            \"SchemeName\":\"RetailBank\",\n            \"Identification\": \"{{debitAccountNumber}}\",\n            \"Name\": \"Ariana Grande\",\n            \"AccountType\":\"Savings\",\n            \"SecondaryIdentification\":\"\"  \n        },\n        \"DebtorAgent\": {\n              \"Name\":\"BOA\",\n              \"Identification\":\"BOFAUS3N\",\n              \"SchemeName\": \"RetailBank\"\n        },\n          \"Creditor\":{\n          \"Name\": \"ChecquingAccount\" \n        },\n        \"CreditorAgent\": {\n              \"Name\":\"CITI\",\n              \"Identification\":\"CITICATTBCH\",\n               \"SchemeName\": \"RetailBank\"\n        },\n       \"CreditorAccount\":  {\n           \"SchemeName\": \"RetailBank\",\n           \"Identification\": \"{{creditAccountNumber}}\",\n           \"Name\": \"Jonathan Swift\",\n           \"AccountType\":\"Checking\",\n          \"SecondaryIdentification\": \"0002\"\n        },\n      \"RemittanceInformation\": {\n        \"Reference\": \"FRESCO-037\",\n        \"Unstructured\": \"Internal ops code 5120103\"\n      }\n    }\n  },\n  \"Risk\": {\n    \"PaymentContextCode\": \"PersonToPerson\",\n     \"MerchantCategoryCode\": \"5967\",\n    \"MerchantCustomerIdentification\": \"053598653254\",\n     \"DeliveryAddress\": {\n        \"AddressLine\":  \"\",\n        \"StreetName\": \"Main St.\",\n        \"BuildingNumber\": \"123\",\n        \"PostCode\": \"17699\",\n        \"TownName\": \"Chicago\",\n        \"CountrySubdivision\": \"Illinois\",\n        \"Country\":  \"US\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host-fins-openbanking-pisp-dom-exp-api}}/api/domestic-payments",
+							"protocol": "https",
+							"host": [
+								"{{host-fins-openbanking-pisp-dom-exp-api}}"
+							],
+							"path": [
+								"api",
+								"domestic-payments"
+							]
+						},
+						"description": "Call ping operation with no parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Post Domestic Payments - National - Fedwire",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Data\": {\n    \"ConsentId\": \"1234\",\n    \"Initiation\": {\n      \"UserID\": \"test\",\n      \"InstructionIdentification\": \"NATIONAL_TRANSFER\",\n      \"EndToEndIdentification\": \"{{$randomUUID}}\",\n      \"ChannelType\": \"Bank_Fedwire\",\n      \"LocalInstrument\": \"\",\n      \"InstructionPriority\": \"Normal\",\n      \"Purpose\": \"CREDIT_TRANSFER\",\n      \"ChargeBearer\": \"BorneByDebtor\",\n      \"CurrencyOfTransfer\": \"USD\",\n      \"InstructedAmount\": {\n        \"Amount\": 2,\n        \"Currency\": \"USD\"\n      },\n      \"ExchangeRateInformation\": {\n        \"UnitCurrency\": \"USD\",\n        \"ExchangeRate\": 1.0,\n        \"RateType\": \"Actual\",\n        \"ContractIdentification\": \"\"\n      },\n      \"Debtor\": {\n        \"Name\": \"CheckingAccount\"\n      },\n      \"DebtorAccount\": {\n        \"SchemeName\": \"RetailBank\",\n        \"Identification\": \"{{debitAccountNumber}}\",\n        \"Name\": \"Amanda Swift\",\n        \"AccountType\": \"Checking\",\n        \"SecondaryIdentification\": \"\"\n      },\n      \"DebtorAgent\": {\n        \"Name\": \"BOA\",\n        \"Identification\": \"BOFAUS3N\",\n        \"SchemeName\": \"RetailBank\"\n      },\n      \"Creditor\": {\n        \"Name\": \"ChecquingAccount\"\n      },\n      \"CreditorAccount\": {\n        \"SchemeName\": \"RetailBank\",\n        \"Identification\": \"{{creditAccountNumber}}\",\n        \"Name\": \"ACME Inc\",\n        \"AccountType\": \"Checking\",\n        \"SecondaryIdentification\": \"0002\"\n      },\n      \"CreditorAgent\": {\n        \"Name\": \"BOA\",\n        \"Identification\": \"BOFAUS3N\",\n        \"SchemeName\": \"RetailBank\"\n      },\n      \"RemittanceInformation\": {\n        \"Reference\": \"FRESCO-037\",\n        \"Unstructured\": \"Internal ops code 5120103\"\n      }\n    }\n  },\n  \"Risk\": {\n    \"PaymentContextCode\": \"PersonToPerson\",\n    \"MerchantCategoryCode\": \"5967\",\n    \"MerchantCustomerIdentification\": \"053598653254\",\n    \"DeliveryAddress\": {\n      \"AddressLine\": \"\",\n      \"StreetName\": \"Main St.\",\n      \"BuildingNumber\": \"123\",\n      \"PostCode\": \"17699\",\n      \"TownName\": \"Chicago\",\n      \"CountrySubdivision\": \"Illinois\",\n      \"Country\": \"US\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host-fins-openbanking-pisp-dom-exp-api}}/api/domestic-payments",
+							"protocol": "https",
+							"host": [
+								"{{host-fins-openbanking-pisp-dom-exp-api}}"
+							],
+							"path": [
+								"api",
+								"domestic-payments"
+							]
+						},
+						"description": "Call ping operation with no parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Post Domestic Payments - National - LOCAL (Intrabank)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Data\": {\n    \"ConsentId\": \"1234\",\n    \"Initiation\": {\n      \"UserID\": \"test\",\n      \"InstructionIdentification\": \"NATIONAL_TRANSFER\",\n      \"EndToEndIdentification\": \"{{$randomUUID}}\",\n      \"ChannelType\": \"LOCAL\",\n      \"LocalInstrument\": \"\",\n      \"InstructionPriority\": \"Normal\",\n      \"Purpose\": \"CREDIT_TRANSFER\",\n      \"ChargeBearer\": \"BorneByDebtor\",\n      \"CurrencyOfTransfer\": \"USD\",\n      \"InstructedAmount\": {\n        \"Amount\": 3.5,\n        \"Currency\": \"USD\"\n      },\n      \"ExchangeRateInformation\": {\n        \"UnitCurrency\": \"USD\",\n        \"ExchangeRate\": 1.0,\n        \"RateType\": \"Actual\",\n        \"ContractIdentification\": \"\"\n      },\n      \"Debtor\": {\n        \"Name\": \"CheckingAccount\"\n      },\n      \"DebtorAccount\": {\n        \"SchemeName\": \"RetailBank\",\n        \"Identification\": \"{{debitAccountNumber}}\",\n        \"Name\": \"Amanda Swift\",\n        \"AccountType\": \"Checking\",\n        \"SecondaryIdentification\": \"\"\n      },\n      \"DebtorAgent\": {\n        \"Name\": \"BOA\",\n        \"Identification\": \"BOFAUS3N\",\n        \"SchemeName\": \"RetailBank\"\n      },\n      \"Creditor\": {\n        \"Name\": \"ChecquingAccount\"\n      },\n      \"CreditorAccount\": {\n        \"SchemeName\": \"RetailBank\",\n        \"Identification\": \"{{creditAccountNumber}}\",\n        \"Name\": \"ACME Inc\",\n        \"AccountType\": \"Checking\",\n        \"SecondaryIdentification\": \"0002\"\n      },\n      \"CreditorAgent\": {\n        \"Name\": \"BOA\",\n        \"Identification\": \"BOFAUS3N\",\n        \"SchemeName\": \"RetailBank\"\n      },\n      \"RemittanceInformation\": {\n        \"Reference\": \"FRESCO-037\",\n        \"Unstructured\": \"Internal ops code 5120103\"\n      }\n    }\n  },\n  \"Risk\": {\n    \"PaymentContextCode\": \"PersonToPerson\",\n    \"MerchantCategoryCode\": \"5967\",\n    \"MerchantCustomerIdentification\": \"053598653254\",\n    \"DeliveryAddress\": {\n      \"AddressLine\": \"\",\n      \"StreetName\": \"Main St.\",\n      \"BuildingNumber\": \"123\",\n      \"PostCode\": \"17699\",\n      \"TownName\": \"Chicago\",\n      \"CountrySubdivision\": \"Illinois\",\n      \"Country\": \"US\"\n    }\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{host-fins-openbanking-pisp-dom-exp-api}}/api/domestic-payments",
+							"protocol": "https",
+							"host": [
+								"{{host-fins-openbanking-pisp-dom-exp-api}}"
+							],
+							"path": [
+								"api",
+								"domestic-payments"
+							]
+						},
+						"description": "Call ping operation with no parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get  Domestic Payments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host-fins-openbanking-pisp-dom-exp-api}}/api/domestic-payments/:DomesticPaymentId",
+							"protocol": "https",
+							"host": [
+								"{{host-fins-openbanking-pisp-dom-exp-api}}"
+							],
+							"path": [
+								"api",
+								"domestic-payments",
+								":DomesticPaymentId"
+							],
+							"variable": [
+								{
+									"key": "DomesticPaymentId",
+									"value": "123444"
+								}
+							]
+						},
+						"description": "Call ping operation with no parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get  Funds Confirmation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{host-fins-openbanking-pisp-dom-exp-api}}/api/domestic-payment-consents/:ConsentId/funds-confirmation",
+							"protocol": "https",
+							"host": [
+								"{{host-fins-openbanking-pisp-dom-exp-api}}"
+							],
+							"path": [
+								"api",
+								"domestic-payment-consents",
+								":ConsentId",
+								"funds-confirmation"
+							],
+							"variable": [
+								{
+									"key": "ConsentId",
+									"value": "1233333"
+								}
+							]
+						},
+						"description": "Call ping operation with no parameters"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{accelerator_app_client_secret}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{accelerator_app_client_id}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host-fins-openbanking-pisp-dom-exp-api",
+			"value": "fins-openbanking-pisp-dom-exp-api-v1-dev.ca-c1.cloudhub.io"
+		},
+		{
+			"key": "host_core_banking_accounts_sys_api",
+			"value": "fins-core-banking-accounts-sys-api-v1-dev.ca-c1.cloudhub.io"
+		},
+		{
+			"key": "host_core_banking_customers_sys_api",
+			"value": "fins-core-banking-customers-sys-api-v1-dev.ca-c1.cloudhub.io"
+		},
+		{
+			"key": "customer1Id",
+			"value": ""
+		},
+		{
+			"key": "customer2Id",
+			"value": ""
+		},
+		{
+			"key": "creditAccountId",
+			"value": ""
+		},
+		{
+			"key": "debitAccountId",
+			"value": ""
+		},
+		{
+			"key": "creditAccountNumber",
+			"value": ""
+		},
+		{
+			"key": "debitAccountNumber",
+			"value": ""
+		}
+	]
+}

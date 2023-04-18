@@ -1,0 +1,146 @@
+%dw 2.0
+
+type auto_0fc47e09_8d2a_45d9_aa46_f16839818445_Output_Payload = {
+  Data: {
+    Status: "AceptedSettlementCompleted", 
+    StatusUpdateDateTime?: String, 
+    CreationDateTime: String, 
+    ExpectedExecutionDateTime?: String, 
+    ExchangeRateInformation?: {
+      ExchangeRate: Number, 
+      RateType: "Actual", 
+      UnitCurrency: "BRL", 
+      ContractIdentification: String, 
+      _?: Any
+    }, 
+    PaymentId: String, 
+    Charges?: {
+      Type: String, 
+      ChargeBearer: "Shared", 
+      _?: Any
+    }, 
+    ConsentId?: String, 
+    Initiation: {
+      SupplementaryData?: String, 
+      DebtorAccount?: {
+        SecondaryIdentification?: String, 
+        SchemeName?: "CryptoPayment", 
+        Identification: String, 
+        AccountType?: String, 
+        Name: String, 
+        _?: Any
+      }, 
+      CreditorAgent?: {
+        PostalAddress?: {
+          StreetName: String, 
+          Department?: String, 
+          AddressLine: String, 
+          TownName: String, 
+          StreetNumber: String, 
+          Country: String, 
+          SubDepartment?: String, 
+          CountrySubdivision: String, 
+          AddressType: "MailTo", 
+          PostCode: String, 
+          _?: Any
+        }, 
+        SchemeName?: "CryptoPayment", 
+        Identification: String, 
+        Name: String, 
+        _?: Any
+      }, 
+      EndToEndIdentification: String, 
+      InstructionIdentification: "CREDIT_TRANSFER", 
+      CurrencyOfTransfer: "BRL", 
+      CreditorAccount: {
+        SecondaryIdentification?: String, 
+        SchemeName?: "CryptoPayment", 
+        Identification: String, 
+        AccountType?: String, 
+        Name: String, 
+        _?: Any
+      }, 
+      Purpose?: String, 
+      ChargeBearer?: "Shared", 
+      InstructionPriority: "Urgent" | "Normal", 
+      LocalInstrument?: String, 
+      Debtor?: {
+        PostalAddress?: {
+          StreetName: String, 
+          Department?: String, 
+          AddressLine: String, 
+          TownName: String, 
+          StreetNumber: String, 
+          Country: String, 
+          SubDepartment?: String, 
+          CountrySubdivision: String, 
+          AddressType: "MailTo", 
+          PostCode: String, 
+          _?: Any
+        }, 
+        Name: String, 
+        _?: Any
+      }, 
+      RemittanceInformation?: {
+        Unstructured: String, 
+        Reference: String, 
+        _?: Any
+      }, 
+      ExchangeRateInformation?: {
+        ExchangeRate: Number, 
+        RateType: "Actual", 
+        UnitCurrency: "BRL", 
+        ContractIdentification: String, 
+        _?: Any
+      }, 
+      UserID?: String, 
+      DebtorAgent?: {
+        PostalAddress?: {
+          StreetName: String, 
+          Department?: String, 
+          AddressLine: String, 
+          TownName: String, 
+          StreetNumber: String, 
+          Country: String, 
+          SubDepartment?: String, 
+          CountrySubdivision: String, 
+          AddressType: "MailTo", 
+          PostCode: String, 
+          _?: Any
+        }, 
+        SchemeName?: "CryptoPayment", 
+        Identification: String, 
+        Name: String, 
+        _?: Any
+      }, 
+      ChannelType: "Bank_SWIFT", 
+      Creditor?: {
+        PostalAddress?: {
+          StreetName: String, 
+          Department?: String, 
+          AddressLine: String, 
+          TownName: String, 
+          StreetNumber: String, 
+          Country: String, 
+          SubDepartment?: String, 
+          CountrySubdivision: String, 
+          AddressType: "MailTo", 
+          PostCode: String, 
+          _?: Any
+        }, 
+        Name: String, 
+        _?: Any
+      }, 
+      InstructedAmount: {
+        Amount: Number, 
+        Currency: String, 
+        _?: Any
+      }, 
+      _?: Any
+    }, 
+    ExpectedSettlementDateTime?: String, 
+    _?: Any
+  }, 
+  _?: Any
+}
+

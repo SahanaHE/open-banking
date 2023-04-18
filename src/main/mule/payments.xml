@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<flow name="payments_initiate-domestic-payments" doc:id="d8497c04-b92d-4f2b-9133-f5326aac6743">
+		<ee:transform xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="873f0bee-c1e1-473f-b9d6-8da10663c3c2" doc:name="Initialise Variables">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+            </ee:message>
+            <ee:variables>
+                <ee:set-variable variableName="Payment_UUID"><![CDATA[%dw 2.0
+output application/java
+---
+"PmtTx-" ++ uuid()]]></ee:set-variable>
+				<ee:set-variable variableName="user_id" ><![CDATA[%dw 2.0
+output application/java
+---
+
+if(!isEmpty(payload.Data.Initiation.UserID)) payload.Data.Initiation.UserID else ""]]></ee:set-variable>
+				<ee:set-variable variableName="initial_payload" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+				<ee:set-variable variableName="consentId" ><![CDATA[%dw 2.0
+output application/java
+---
+payload.Data.ConsentId]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<logger level="DEBUG" doc:name="Logger" doc:id="2cd3867f-391f-4f35-875f-e0897bcade54" message="Payment TxID: #[vars.Payment_UUID] , UserId: #[vars.user_id]" />
+        <ee:transform doc:name="Set Funds Confirmation Request" doc:id="f4337003-7212-4c27-b4e8-41977091dae5">
+            <ee:message>
+				<ee:set-payload resource="dwl/set-payload-for-funds-confirmation.dwl" />
+            </ee:message>
+        </ee:transform>
+        <flow-ref doc:name="payments_post-funds-confirmations" doc:id="129d3c8c-0282-4078-9de6-e3fc177abe1a" name="payments_post-funds-confirmations" />
+		<try doc:name="Try" doc:id="4f48ffda-3406-43b6-9e3a-f9e8ca727d14" >
+			<validation:is-true doc:name="Are Funds Available?" doc:id="d215d756-67d4-4870-8810-069af34bc0e3" expression="#[payload.Data.FundsAvailable]" config-ref="Validation_Config" message='#["Insufficient funds to process the payment"]'/>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="fb236cc2-0d17-4f04-9854-ea3d08a8581e" type="ANY">
+					<set-variable value="#[400]" doc:name="Set httpStatus" doc:id="e58c53ba-aa79-4d6c-bf45-0242d59b03e2" variableName="httpStatus" />
+					<flow-ref doc:name="common-error-handler_http-exception" doc:id="5b162bd2-6c44-4926-bac9-4ace0050c4a1" name="common-error-handler_http-exception" />
+					<raise-error doc:name="ANY" doc:id="3198367f-04a1-468d-bc67-c416488f1953" type="ANY" description="No sufficient funds to process the payment"/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<logger level="INFO" doc:name="Logger" doc:id="ea6cfb00-a3cd-4956-b00f-23fbf12b7107" message="SUCCESS: Debtor: #[vars.initial_payload.Data.Initiation.DebtorAccount.Identification] : #[vars.initial_payload.Data.Initiation.DebtorAccount.Name] @ instituion #[vars.initial_payload.Data.Initiation.DebtorAgent.Name] has sufficient funds" />
+		<ee:transform doc:name="Post Domestic Payments Request" doc:id="61058d95-6c05-4e93-8948-1e36185e95ab">
+					<ee:message>
+						<ee:set-payload resource="dwl/post-domestic-payments-request.dwl" />
+					</ee:message>
+				</ee:transform>
+		<flow-ref doc:name="payments_post-domestic-payments" doc:id="d3844dc3-cfcc-4a61-8216-51385250f067" name="payments_post-domestic-payments" />
+    </flow>
+    <flow name="payments_post-funds-confirmations" doc:id="711253af-c925-44b1-9791-c316ae0b724f" >
+		<ee:transform doc:name="Funds Confirmation Request" doc:id="90d28f76-987b-4916-a05d-21faf4c8fe03" >
+			<ee:message >
+				<ee:set-payload resource="dwl/confirm-funds-aspsp-request.dwl" />
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
+		<logger level="DEBUG" doc:name="Log Payload" doc:id="0b82fb57-df99-4397-99c4-13ecf90b113a" message="Funds Confirmation Payload #[payload]"/>
+		<try doc:name="Try" doc:id="82026e14-5470-4afe-a8bb-2c71a952f78d" >
+			<http:request method="POST" doc:name="Funds Confirmation ASPSP Exp API" doc:id="cd7a3438-acbc-4b62-86c4-dc211785b1dd" config-ref="openbanking-aspsp-exp-httpRequestConfig" path="/funds-confirmations" sendCorrelationId="ALWAYS" correlationId="#[correlationId]">
+		</http:request>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="0989069d-3042-4734-b467-391b092433d4" >
+					<flow-ref doc:name="common-error-handler_http-exception" doc:id="7a4133f5-95e3-443f-9480-56ab46ab24b0" name="common-error-handler_http-exception"/>
+					<raise-error doc:name="ANY" doc:id="a2fe2156-6f30-4ee9-9a8a-e2b82a8063ef" type="ANY" description="Failed to validate funds"/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<logger level="DEBUG" doc:name="Log ASPSP Response" doc:id="9d7490d4-d76f-4e81-86a1-eb3890d28838" message="Funds Confirmation Response #[payload]"/>
+	</flow>
+	<flow name="payments_get-domestic-payments-consents" doc:id="04301f06-45d2-46fd-8f84-2c7b3d6ca5b4" >
+		<logger level="INFO" doc:name="Log Before Connector" doc:id="63494965-762e-4d2d-9466-3b3c7f64b1d1" message="Before ASPSP get:/domestic-payment-consents/{ConsentId} call"/>
+		<try doc:name="Try" doc:id="059ca3e2-11b1-4758-bdc2-e7741ed90e0d" >
+			<http:request method="GET" doc:name="ASPSP Get Consent" doc:id="b7d9273d-ef84-4fab-a0f5-d0ad69318cd9" config-ref="openbanking-aspsp-exp-httpRequestConfig" path="/domestic-payment-consents/{ConsentId}" sendCorrelationId="ALWAYS" correlationId="#[correlationId]">
+			<http:uri-params><![CDATA[#[output application/java
+---
+{
+	"ConsentId" : vars.consentId
+}]]]></http:uri-params>
+		</http:request>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c013181f-9a87-4a37-9b49-ed54266fac5f" >
+					<flow-ref doc:name="common-error-handler_http-exception" doc:id="d62ed886-cb81-4f3d-a878-505816a4717b" name="common-error-handler_http-exception"/>
+					<raise-error doc:name="ANY" doc:id="aedc1c1c-4778-4135-a0ba-fd0edd586597" type="ANY" description="Failed to get Domestic Consents"/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<logger level="INFO" doc:name="Log After Connector" doc:id="4dc47a45-001d-46da-988e-0059b4c5243f" message="Before ASPSP get:/domestic-payment-consents/{ConsentId} call"/>
+		<ee:transform doc:name="Map Response" doc:id="81a056fc-e5a7-47f6-8277-f73a83df4d22" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="payments_post-domestic-payments-consents" doc:id="52dbfbef-58df-415b-90a1-03ab6056304f">
+	<logger level="INFO" doc:name="Log Before Connector" doc:id="8977587c-8470-4ba7-be96-509520fcf512" message="Before ASPSP post:/domestic-payment-consents call" />
+		<try doc:name="Try" doc:id="000b789f-f92b-4d5f-a58c-48d7cc83e1db" >
+			<http:request method="POST" doc:name="ASPSP Post Domestic Payments Consents" doc:id="fa8fb29a-d192-4cab-a5fe-641f0e6b0a7f" config-ref="openbanking-aspsp-exp-httpRequestConfig" path="/domestic-payment-consents" sendCorrelationId="ALWAYS" correlationId="#[correlationId]">
+		</http:request>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c688823b-aa56-4907-bc7a-5bd20368182e" >
+					<flow-ref doc:name="common-error-handler_http-exception" doc:id="dfaf248f-56cc-4fb5-a084-ecf1bd90b75b" name="common-error-handler_http-exception"/>
+					<raise-error doc:name="ANY" doc:id="11e5305b-a6c5-4c58-af8c-9483fafaacbd" type="ANY" description="Failed to post Domestic Consents"/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<logger level="INFO" doc:name="Log After Connector" doc:id="530f0ad2-5709-473d-83ab-d4d8b3f9d29f" message="After ASPSP post:/domestic-payment-consents call"/>
+		<ee:transform doc:name="Map Response" doc:id="d40c81f0-61fc-48ca-8d4e-9610a4349e51">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>	
+	</flow>
+	<flow name="payments_get-domestic-payments" doc:id="02764ec9-a1b7-49b3-9a69-e2624fe2747e">
+	<logger level="INFO" doc:name="Log Before Connector" doc:id="c5585397-ba1e-4456-9cc3-0ef18b650e74" message="Before ASPSP get:/domestic-payments/{DomesticPaymentId} call" />
+		<try doc:name="Try" doc:id="7aea9854-e120-4e95-81a0-b268746dba49" >
+			<http:request method="GET" doc:name="ASPSP Get Domestic Payments" doc:id="2b15a7b3-9f64-4298-ab18-7a1995ab447c" config-ref="openbanking-aspsp-exp-httpRequestConfig" path="/domestic-payments/{DomesticPaymentId}" sendCorrelationId="ALWAYS" correlationId="#[correlationId]">
+			<http:uri-params><![CDATA[#[output application/java
+---
+{
+	"DomesticPaymentId" : vars.domesticPaymentId
+}]]]></http:uri-params>
+		</http:request>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="fcd7563a-e80f-4ee9-9758-5556954622de" >
+					<flow-ref doc:name="common-error-handler_http-exception" doc:id="26b0b05a-ed21-434d-8b56-286073132685" name="common-error-handler_http-exception"/>
+					<raise-error doc:name="ANY" doc:id="2759b29e-91ad-4d18-b4bc-ad8228e3e085" type="ANY" description="Failed to get Domestic Payments"/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<logger level="INFO" doc:name="Log After Connector" doc:id="ed1ed3ae-e9e9-4e0d-9787-66d50b4151ae" message="After ASPSP get:/domestic-payments/{DomesticPaymentId} call"/>
+		<ee:transform doc:name="Map Response" doc:id="aa02bf66-60ba-4a10-bd8e-e64e6e2b9ec8">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>	
+	</flow>
+	<flow name="payments_post-domestic-payments" doc:id="0fc47e09-8d2a-45d9-aa46-f16839818445" >
+		<logger level="DEBUG" doc:name="Log Initiate Payment Data" doc:id="d763f13c-42a4-411a-b3b0-d04d62ce2dbb" message="PISP initiating Payment - data going into ASPSP: payload = #[payload]"/>
+		<logger level="INFO" doc:name="Log Info" doc:id="31729356-1424-4edd-87bd-bf274d425547" message="Before 'post:/domestic-payments' ASPSP EXP API call"/>
+		<try doc:name="Try" doc:id="6e678d9e-29cd-48e8-bf9f-9cc323e59107" >
+			<http:request method="POST" doc:name="Post Domestic Payments ASPSP Exp API" doc:id="061d9fb6-0a09-43e3-bded-fdee679d5d41" config-ref="openbanking-aspsp-exp-httpRequestConfig" path="/domestic-payments" sendCorrelationId="ALWAYS" correlationId="#[correlationId]" />
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="efcdab89-46c1-4862-b1a9-9d7adffd6f67" >
+					<flow-ref doc:name="common-error-handler_http-exception" doc:id="db6037cb-be12-4270-88b9-7c4065f02b06" name="common-error-handler_http-exception"/>
+					<raise-error doc:name="ANY" doc:id="3f1e00f4-c804-474d-b447-07d673e6ee3b" type="ANY" description="Failed to post Domestic Payments request"/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<logger level="INFO" doc:name="Log Info" doc:id="dc3ee025-d61f-43a6-bd85-6de509ce4823" message="After 'post:/domestic-payments' ASPSP EXP API call"/>
+		<logger level="DEBUG" doc:name="Log ASPSP Response" doc:id="36c4ec99-6284-4672-a120-0266dafe25e4" message="PISP Payment Order Response: #[payload]"/>
+	</flow>
+</mule>

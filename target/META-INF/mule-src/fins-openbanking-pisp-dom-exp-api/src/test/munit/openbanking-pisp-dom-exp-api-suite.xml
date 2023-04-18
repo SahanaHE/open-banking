@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="openbanking-pisp-dom-exp-api-suite.xml" />
+	<munit:test name="get:\domestic-payment-consents\(ConsentId):openbanking-pisp-dom-exp-api-config-test" doc:id="2789bbed-3797-423a-8838-124646909b25" >
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock payments_get-domestic-payments-consent" doc:id="e7aa07a1-463e-4505-b373-c01acc12ab3c" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b7d9273d-ef84-4fab-a0f5-d0ad69318cd9" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="openbanking-aspsp-exp-httpRequestConfig" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://getdomesticpaymentconsentsConsentIdopenbankingpispdomexpapiconfigtest\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getdomesticpaymentconsentsConsentIdopenbankingpispdomexpapiconfigtest\mock_attributes.dwl')]" />
+					<munit-tools:variables>
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getdomesticpaymentconsentsConsentIdopenbankingpispdomexpapiconfigtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="consentId" value="#[output application/java --- readUrl('classpath://getdomesticpaymentconsentsConsentIdopenbankingpispdomexpapiconfigtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="f7d7ad30-5c43-4300-9cdd-97166dda3068">
+				<munit:payload value="#[output application/json  --- readUrl('classpath://getdomesticpaymentconsentsConsentIdopenbankingpispdomexpapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://getdomesticpaymentconsentsConsentIdopenbankingpispdomexpapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables>
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getdomesticpaymentconsentsConsentIdopenbankingpispdomexpapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to get:\domestic-payment-consents\(ConsentId):openbanking-pisp-dom-exp-api-config" doc:id="7c1f6e57-61f9-4837-b116-a030ab12186a" name="get:\domestic-payment-consents\(ConsentId):openbanking-pisp-dom-exp-api-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="ab41bed9-0f1e-4ee9-8dcf-d07f70452103" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\domestic-payments\(DomesticPaymentId):openbanking-pisp-dom-exp-api-config-test" doc:id="6e08b91f-91f1-48f1-8edd-6334f1b6ff43" >
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="d9a972a5-a108-448e-afee-20bde8a5963e" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2b15a7b3-9f64-4298-ab18-7a1995ab447c" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="openbanking-aspsp-exp-httpRequestConfig" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="12b3ef44-f160-4c2a-8c97-b63ba5af7d0d">
+				<munit:payload value="#[readUrl('classpath://getdomesticpaymentsDomesticPaymentIdopenbankingpispdomexpapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getdomesticpaymentsDomesticPaymentIdopenbankingpispdomexpapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables>
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getdomesticpaymentsDomesticPaymentIdopenbankingpispdomexpapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to get:\domestic-payments\(DomesticPaymentId):openbanking-pisp-dom-exp-api-config" doc:id="6b32b765-4516-47fb-a298-030fff01b1cd" name="get:\domestic-payments\(DomesticPaymentId):openbanking-pisp-dom-exp-api-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="7589359d-eb70-4eb0-8c9e-ed19c4929a5b" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\domestic-payment-consents\(ConsentId)\funds-confirmation:openbanking-pisp-dom-exp-api-config-test" doc:id="691bc37f-5a88-416e-ad7c-57c188c41810" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="ef703ebc-18a6-4877-88f6-ff861e51e2aa">
+				<munit:payload value="#[readUrl('classpath://getdomesticpaymentconsentsConsentIdfundsconfirmationopenbankingpispdomexpapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getdomesticpaymentconsentsConsentIdfundsconfirmationopenbankingpispdomexpapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables>
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getdomesticpaymentconsentsConsentIdfundsconfirmationopenbankingpispdomexpapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to get:\domestic-payment-consents\(ConsentId)\funds-confirmation:openbanking-pisp-dom-exp-api-config" doc:id="65a1149f-b3c0-48e3-9c0e-0089ca05150a" name="get:\domestic-payment-consents\(ConsentId)\funds-confirmation:openbanking-pisp-dom-exp-api-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="5d5e8c6a-58f8-47f9-9305-a9129bc159b4" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="openbanking-pisp-dom-exp-api-suiteTest" doc:id="a7b212fc-c7ed-4322-9f98-02ac8fc8423b" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="5a046be0-3935-4aa9-95de-e934c5d79160" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fa8fb29a-d192-4cab-a5fe-641f0e6b0a7f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="openbanking-aspsp-exp-httpRequestConfig" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[readUrl('classpath://postdomesticpaymentconsentsopenbankingpispdomexpapiconfigtest/postdomesticpaymentconsentsresponse.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="4ed6b08a-55dc-4ed1-97e3-a81a66289e56" >
+				<munit:payload value="#[readUrl('classpath://postdomesticpaymentconsentsopenbankingpispdomexpapiconfigtest/set-event_payload.dwl')]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow Reference" doc:id="deb5608d-17b1-4d19-8840-dc1153a6d685" name="post:\domestic-payment-consents:application\json:openbanking-pisp-dom-exp-api-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="791806da-cf52-4f12-8403-8a8fb0e82b3a" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="postdomesticpaymentopenbanking-pisp-dom-exp-api-suiteTest1" doc:id="724de55a-4a85-4bfb-ab8d-528fc504fb2e" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="e42f9b8b-535f-451d-9249-eed619408649" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="cd7a3438-acbc-4b62-86c4-dc211785b1dd" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="openbanking-aspsp-exp-httpRequestConfig" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://postdomesticpaymentopenbankingpispdomexpapiconfigtest/postfraudconfirmationsresponse.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="464925c1-98c9-4c09-9a6c-36864d142601" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="061d9fb6-0a09-43e3-bded-fdee679d5d41" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="openbanking-aspsp-exp-httpRequestConfig" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://postdomesticpaymentopenbankingpispdomexpapiconfigtest/postdomesticpayementresponse.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="1cfdb3ab-ae66-4bbf-b17a-b73bf746742a" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://postdomesticpaymentopenbankingpispdomexpapiconfigtest/set-event_payload.dwl')]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow Reference" doc:id="46e85d97-2eef-4b69-9959-f7a2fa1bdb79" name="post:\domestic-payments:application\json:openbanking-pisp-dom-exp-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="e2784e62-a976-4bb7-b8f4-18e395ce8346" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\domestic-payments\(DomesticPaymentId):openbanking-pisp-dom-exp-api-config-http-connectivity-errortest" doc:id="1804bd48-62fc-43c0-94fe-17ccbbc9036e" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="294c0233-fce2-4299-b802-8e62b0edc51d" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2b15a7b3-9f64-4298-ab18-7a1995ab447c" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="openbanking-aspsp-exp-httpRequestConfig" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="ace205a4-8f69-491b-82ad-53eb486bc81b" processor="raise-error" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ANY" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="2759b29e-91ad-4d18-b4bc-ad8228e3e085" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="fa97e385-0343-49ea-bab8-6b98bb2d700f" >
+				<munit:payload value="#[readUrl('classpath://getdomesticpaymentsDomesticPaymentIdopenbankingpispdomexpapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getdomesticpaymentsDomesticPaymentIdopenbankingpispdomexpapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getdomesticpaymentsDomesticPaymentIdopenbankingpispdomexpapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="cc3162ed-4f3d-4ebe-b13b-280245a77d5d" >
+				<flow-ref doc:name="Flow-ref to get:\domestic-payments\(DomesticPaymentId):openbanking-pisp-dom-exp-api-config" doc:id="414d0748-6e0b-4088-a9b5-6edee297e7f0" name="get:\domestic-payments\(DomesticPaymentId):openbanking-pisp-dom-exp-api-config" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e452aa83-f65a-42f7-b1a9-6e17b65b4b86" type="ANY">
+						<logger level="INFO" doc:name="Logger" doc:id="68304bb0-4796-4c2f-a505-8f8aceb2c987" message="error"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="2bafb8cb-bc3e-4a66-a28f-c1acd5faf3b3" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="openbanking-pisp-dom-exp-api-suite-connector-exceptionTest" doc:id="fad4c1aa-a6ba-4288-8599-c044d01f27e8" >
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="c3798ed3-c095-4bf9-9502-74ee0375f385" name="common-error-handler_connector-exception" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="fb58c441-e1f1-4b62-a778-54d6b7987e80" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="postdomesticpaymentopenbanking-pisp-dom-exp-api-suite-validation-errorTest" doc:id="b5602396-a197-4cc2-ab8d-481984c62075" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="f05aa0e2-88b5-44d1-8cce-2c74a64547a0" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="cd7a3438-acbc-4b62-86c4-dc211785b1dd" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="openbanking-aspsp-exp-httpRequestConfig" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://postdomesticpaymentopenbankingpispdomexpapiconfigtest/postfraudconfirmationsresponse.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when INVALID_BOOLEAN" doc:id="62865c09-5336-4de2-9da6-216118c7c2bc" processor="validation:is-true">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Are Funds Available?" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="d215d756-67d4-4870-8810-069af34bc0e3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="VALIDATION:INVALID_BOOLEAN" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="deabe377-99bd-414b-b94b-cd42e0753c23" processor="raise-error" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ANY" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="3198367f-04a1-468d-bc67-c416488f1953" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="19a954c9-c28f-450b-a1a0-a2be92567346" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://postdomesticpaymentopenbankingpispdomexpapiconfigtest/set-event_payload.dwl')]" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="39779445-20f2-4e6c-ab4b-d74358c3cd2d" >
+				<flow-ref doc:name="Flow Reference" doc:id="9418f208-cb61-437e-ae26-40ae7c8e3432" name="post:\domestic-payments:application\json:openbanking-pisp-dom-exp-api-config" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7ce6accf-e1e0-4c50-905d-e6d7877ece28" >
+						<logger level="INFO" doc:name="Logger" doc:id="c627b4d2-12a9-4066-ae85-ec815caad9ef" message="ERROR"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="45630328-e13b-490f-a5eb-6d68a3715681" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="openbanking-pisp-dom-exp-api-suite-common-sendall-notificationTest" doc:id="88336036-69f6-4269-91e2-ba753572ceed" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when-common error handler notification" doc:id="46621f6b-936c-4853-9d50-99794dbb7037" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="notifications-prc-api request" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="46380ca4-51b4-475f-80e4-c62ff01370f4" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://postdomesticpaymentopenbankingpispdomexpapiconfigtest/postfraudconfirmationsresponse.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="050aeebf-faa1-4361-a6b0-df9f4358637a" name="common-error-handler_send-all" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="dc2b39ce-1e2a-43f5-b58b-9fabbf73aacf" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <flow name="openbanking-pisp-dom-exp-api-main" doc:id="0e8bb451-682b-45f8-812c-3fd6b875fa59">
+        <http:listener config-ref="openbanking-pisp-dom-exp-api-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="openbanking-pisp-dom-exp-api-config" />
+        <error-handler ref="error-handler_common" />
+    </flow>
+    <flow name="openbanking-pisp-dom-exp-api-console">
+        <http:listener config-ref="openbanking-pisp-dom-exp-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="openbanking-pisp-dom-exp-api-config" />
+        <error-handler ref="error-handler_common" />
+    </flow>
+    <flow name="get:\ping:openbanking-pisp-dom-exp-api-config" doc:id="daa156a7-da20-4fbe-b1cf-2ccf7381b47c">
+        <flow-ref doc:name="ping_get-health" doc:id="2abb93e5-f2ef-4ead-8ddb-b99767c07a90" name="ping_get-health" />
+    </flow>
+    <flow name="get:\domestic-payment-consents\(ConsentId):openbanking-pisp-dom-exp-api-config">
+        <set-variable value="#[attributes.uriParams.'ConsentId']" doc:name="Set Consent Id" doc:id="7876a715-b89a-4b69-a58f-40e81d36833d" variableName="consentId" />
+        <flow-ref doc:name="payments_get-domestic-payments-consent" doc:id="477ea3d3-a47a-4aa8-8a90-4b708bbf03ea" name="payments_get-domestic-payments-consents" />
+    </flow>
+    <flow name="get:\domestic-payments\(DomesticPaymentId):openbanking-pisp-dom-exp-api-config">
+        <set-variable value="#[attributes.uriParams.'DomesticPaymentId']" doc:name="Set domestic Payment Id" doc:id="05769df7-25a1-4d6e-9bff-5aabef172dad" variableName="domesticPaymentId" />
+        <flow-ref doc:name="payments_get-domestic-payments" doc:id="823538a7-f01c-4b53-9f9f-d58625ba7fca" name="payments_get-domestic-payments" />
+    </flow>
+    <flow name="post:\domestic-payment-consents:application\json:openbanking-pisp-dom-exp-api-config" doc:id="72bb7f52-dd91-4f4d-9f83-c04044c27eff">
+        <flow-ref doc:name="payments_post-domestic-payments-consents" doc:id="65a0b28a-1f6a-4e1b-9d0b-9452a4976c3e" name="payments_post-domestic-payments-consents" />
+    </flow>
+    <flow name="post:\domestic-payments:application\json:openbanking-pisp-dom-exp-api-config" doc:id="a519c216-005c-43ab-84dd-d1623553320f">
+        <flow-ref doc:name="payments_initiate-domestic-payments" doc:id="37f5b02d-6d57-4ed4-b7a5-83ed8a1ee4ff" name="payments_initiate-domestic-payments" />
+    </flow>
+    <flow name="get:\domestic-payment-consents\(ConsentId)\funds-confirmation:openbanking-pisp-dom-exp-api-config">
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="ConsentId">attributes.uriParams.'ConsentId'</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  Data: {
+    FundsAvailableDataTime: "2017-06-05T15:15:22+00:00",
+    FundsAvailable: true
+  }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

@@ -1,0 +1,73 @@
+%dw 2.0
+
+type auto_0fc47e09_8d2a_45d9_aa46_f16839818445_Input_Payload = {|
+  Data: {|
+    ConsentId: Null, 
+    Initiation: {|
+      InstructionIdentification: String, 
+      EndToEndIdentification: String, 
+      ChannelType: String, 
+      UserID: String, 
+      LocalInstrument: String, 
+      InstructionPriority: String, 
+      Purpose: String, 
+      ChargeBearer: String, 
+      CurrencyOfTransfer: String, 
+      InstructedAmount: {|
+        Amount: Number {"typeId": "double"}, 
+        Currency: String
+      |}, 
+      ExchangeRateInformation: {|
+        UnitCurrency: String, 
+        ExchangeRate: Number {"typeId": "double"}, 
+        RateType: String, 
+        ContractIdentification: String
+      |}, 
+      Debtor: {| Name: String |}, 
+      DebtorAccount: {|
+        SchemeName: String, 
+        Identification: String, 
+        Name: String, 
+        AccountType: String, 
+        SecondaryIdentification: String
+      |}, 
+      DebtorAgent: {|
+        Name: String, 
+        Identification: String, 
+        SchemeName: String
+      |}, 
+      Creditor: {| Name: String |}, 
+      CreditorAgent: {|
+        Name: String, 
+        Identification: String, 
+        SchemeName: String
+      |}, 
+      CreditorAccount: {|
+        SchemeName: String, 
+        Identification: String, 
+        Name: String, 
+        AccountType: String, 
+        SecondaryIdentification: String
+      |}, 
+      RemittanceInformation: {|
+        Reference: String, 
+        Unstructured: String
+      |}
+    |}
+  |}, 
+  Risk: {|
+    PaymentContextCode: String, 
+    MerchantCategoryCode: String, 
+    MerchantCustomerIdentification: String, 
+    DeliveryAddress: {|
+      AddressLine: String, 
+      StreetName: String, 
+      BuildingNumber: String, 
+      PostCode: String, 
+      TownName: String, 
+      CountrySubdivision: String, 
+      Country: String
+    |}
+  |}
+|}
+
